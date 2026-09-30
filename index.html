@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desk Pro - AZ</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary: #1e3a8a;
+            --secondary: #0d9488;
+            --text: #1f2937;
+            --border: #d1d5db;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 12px;
+        }
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary);
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 4px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #4b5563;
+        }
+        input, select {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            background: #fff;
+            -webkit-appearance: none;
+        }
+        input:focus, select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+        }
+        .select-type {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #fff;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+            border-bottom: 1px dashed var(--border);
+        }
+        .result-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--secondary);
+            border-bottom: none;
+            padding-top: 10px;
+        }
+        .four-square {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .square {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .square-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: bold;
+        }
+        .square-val {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+        .square-apr {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .bracket-row {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .bracket-row:last-child {
+            border-bottom: none;
+        }
+        .bracket-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .bracket-apr {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        .bracket-price {
+            font-size: 14px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 12px 10px;
+            border-top: 1px solid var(--border);
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .footer-link {
+            font-size: 11px;
+            color: #6b7280;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+        }
+        .footer-link:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+        .modal-label {
+            font-size: 11px;
+            color: #4b5563;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .modal-textarea {
+            width: 100%;
+            height: 80px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .modal-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .modal-btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+        .modal-btn-secondary {
+            background: #e5e7eb;
+            color: var(--text);
+        }
+        .modal-status {
+            font-size: 12px;
+            text-align: center;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h1>DeskPro Chandler AZ 🌵</h1>
+        <p style="margin: 4px 0 0 0; font-size: 12px; color: #6b7280; font-weight: 500;">Suttles 2.0</p>
+    </div>
+
+    <!-- Condition Selector -->
+    <div class="form-group">
+        <label>Vehicle Condition Classification</label>
+        <select id="vehicleCondition" class="select-type" onchange="toggleCondition()">
+            <option value="NEW" selected>✨ NEW VEHICLE</option>
+            <option value="USED">🚗 USED VEHICLE</option>
+            <option value="BUDGET">💰 BUDGET TOOL</option>
+        </select>
+    </div>
+
+    <!-- Vehicle Pricing -->
+    <div class="card" id="vehicle-pricing-card">
+        <div class="card-title">Vehicle & Price Fields</div>
+        <div class="form-group" id="year-grid" style="display: none;">
+            <label>Model Year</label>
+            <select id="modelYear" onchange="calculate()">
+                <option value="2027">2027</option>
+                <option value="2026" selected>2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+            </select>
+        </div>
+        <div class="grid-2" id="make-model-grid" style="display: none;">
+            <div class="form-group">
+                <label>Make</label>
+                <input type="text" id="vehicleMake" placeholder="Honda">
+            </div>
+            <div class="form-group">
+                <label>Model</label>
+                <input type="text" id="vehicleModel" placeholder="CR-V">
+            </div>
+        </div>
+        <div class="form-group" id="trim-group" style="display: none;">
+            <label>Trim</label>
+            <input type="text" id="vehicleTrim" placeholder="EX">
+        </div>
+        <button id="msrp-lookup-btn" style="display: none; width: 100%; padding: 12px; margin-bottom: 10px; background: var(--secondary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Look Up Original Base MSRP</button>
+        <div class="form-group" id="new-year-grid" style="display: none;">
+            <label>Year</label>
+            <select id="newVehicleYear" onchange="">
+                <option value="2027">2027</option>
+                <option value="2026" selected>2026</option>
+                <option value="2025">2025</option>
+            </select>
+        </div>
+        <div class="grid-2" id="new-make-model-grid" style="display: none;">
+            <div class="form-group">
+                <label>Make</label>
+                <select id="newVehicleMake" onchange="">
+                    <option value="Subaru" selected>Subaru</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Model</label>
+                <input type="text" id="newVehicleModel" placeholder="Outback">
+            </div>
+        </div>
+        <div class="form-group" id="new-trim-group" style="display: none;">
+            <label>Trim</label>
+            <input type="text" id="newVehicleTrim" placeholder="Limited">
+        </div>
+        <button id="new-msrp-lookup-btn" style="display: none; width: 100%; padding: 12px; margin-bottom: 10px; background: var(--secondary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Look Up Base MSRP</button>
+        <div class="form-group">
+            <label>Original Factory MSRP ($)</label>
+            <input type="number" id="msrp" value="" oninput="autoPopulateSellPrice()" >
+        </div>
+        <div class="form-group">
+            <label>Selling Price ($)</label>
+            <input type="number" id="price" value="25000" oninput="calculate()">
+        </div>
+        <div class="form-group" id="addendum-group">
+            <label>Addendum ($)</label>
+            <select id="addendum" onchange="calculate()">
+                <option value="0">$0</option>
+                <option value="419" selected>$419</option>
+                <option value="519">$519</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Budget Tool -->
+    <div class="card" id="budget-card" style="display: none;">
+        <div class="card-title">Budget Tool - Price Range Calculator</div>
+        <div class="form-group">
+            <label>Desired Monthly Payment ($)</label>
+            <input type="number" id="desiredPayment" value="500" oninput="calculateBudget()">
+        </div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Term (Months)</label>
+                <select id="budgetTerm" onchange="calculateBudget()">
+                    <option value="60" selected>60 Months</option>
+                    <option value="72">72 Months</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Credit Tier</label>
+                <select id="budgetTier" onchange="calculateBudget()">
+                    <option value="1" selected>Tier 1 (740+)</option>
+                    <option value="2">Tier 2 (700-739)</option>
+                    <option value="3">Tier 3 (640-699)</option>
+                    <option value="4">Tier 4 (620-639)</option>
+                    <option value="5">Tier 5 (Below 620)</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Down Payment ($)</label>
+            <input type="number" id="budgetDownPayment" value="2000" oninput="calculateBudget()">
+        </div>
+    </div>
+
+    <!-- Budget Tool Results -->
+    <div class="card" id="budget-results-card" style="display: none;">
+        <div class="card-title">Vehicle Price Range (Pre-Tax)</div>
+        <div id="budget-bracket-results"></div>
+    </div>
+    <div class="card" id="trade-card">
+        <div class="card-title">Trade & Cash Inputs</div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Trade Value ($)</label>
+                <input type="number" id="trade" value="0" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label>Lien / 10 day Payoff ($)</label>
+                <input type="number" id="lien" value="0" oninput="calculate()">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Cash Down ($)</label>
+            <input type="number" id="cash" value="2000" oninput="calculate()">
+        </div>
+    </div>
+
+    <!-- Tax Rate -->
+    <div class="card" id="tax-card">
+        <div class="card-title">Tax Rate</div>
+        <div class="form-group">
+            <label>Tax Rate (%)</label>
+            <input type="number" id="taxRate" value="7.8" step="0.1" oninput="calculate()">
+        </div>
+    </div>
+
+    <!-- Financing Tiers -->
+    <div class="card" id="financing-card">
+        <div class="card-title">Rates & Terms</div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Credit Tier</label>
+                <select id="tier" onchange="calculate()">
+                    <option value="1" selected>Tier 1 (740+)</option>
+                    <option value="2">Tier 2 (700-739)</option>
+                    <option value="3">Tier 3 (640-699)</option>
+                    <option value="4">Tier 4 (620-639)</option>
+                    <option value="5">Tier 5 (Below 620)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Term (Months)</label>
+                <select id="term" onchange="calculate()">
+                    <option value="36">36 Months</option>
+                    <option value="48">48 Months</option>
+                    <option value="60">60 Months</option>
+                    <option value="72" selected>72 Months</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>APR (%)</label>
+            <input type="number" id="baseApr" value="6.0" min="0" max="20" step="0.01" oninput="calculate()">
+        </div>
+    </div>
+
+    <!-- Summary Breakdowns -->
+    <div class="card" id="summary-card">
+        <div class="card-title">Chandler / Maricopa Deal Summary</div>
+        <div class="result-row"><span>Subtotal:</span> <span id="out-gross">$0.00</span></div>
+        <div class="result-row"><span>Trade in Equity:</span> <span id="out-equity">$0.00</span></div>
+        <div class="result-row"><span>Sales Tax Paid:</span> <span id="out-tax">$0.00</span></div>
+        <div class="result-row"><span>MVD Reg + VLT Fees:</span> <span id="out-mvd">$0.00</span></div>
+        <div class="result-row"><span>VTR:</span> <span id="out-vtr">$199.00</span></div>
+        <div class="result-row"><span>Doc Fee:</span> <span id="out-doc">$549.00</span></div>
+        <div class="result-row total"><span>Amount Financed:</span> <span id="out-financed">$0.00</span></div>
+    </div>
+
+    <!-- Final Payments Output Grid -->
+    <div class="card" id="payment-card">
+        <div class="card-title">Desking Payment Matrix</div>
+        <div class="four-square">
+            <div class="square">
+                <div class="square-title">36 Months</div>
+                <div class="square-val" id="p-36">$0</div>
+                <div class="square-apr" id="apr-36">0.00%</div>
+            </div>
+            <div class="square">
+                <div class="square-title">48 Months</div>
+                <div class="square-val" id="p-48">$0</div>
+                <div class="square-apr" id="apr-48">0.00%</div>
+            </div>
+            <div class="square">
+                <div class="square-title">60 Months</div>
+                <div class="square-val" id="p-60">$0</div>
+                <div class="square-apr" id="apr-60">0.00%</div>
+            </div>
+            <div class="square">
+                <div class="square-title">72 Months</div>
+                <div class="square-val" id="p-72">$0</div>
+                <div class="square-apr" id="apr-72">0.00%</div>
+            </div>
+        </div>
+        <div class="card" style="background: #eff6ff; margin-top: 12px;">
+            <div style="text-align: center;">
+                <div style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: bold; margin-bottom: 8px;">Selected Payment</div>
+                <div style="font-size: 24px; font-weight: bold; color: var(--secondary);" id="p-selected">$0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <button class="footer-link" onclick="openRateSheetModal()">Update Rate Sheet</button>
+        <button class="footer-link" onclick="openPricingModal()">Update MSRP Data</button>
+    </div>
+</div>
+
+<!-- Rate Sheet Update Modal -->
+<div class="modal-overlay" id="rateSheetModal">
+    <div class="modal-content">
+        <div class="modal-title">📸 Update Rate Sheet</div>
+        <label class="modal-label">Upload photos of the Subaru financing rate sheet</label>
+        <input type="file" id="rateSheetInput" accept="image/*" multiple style="display:block; width:100%; margin-bottom:1rem; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
+        <div id="rateSheetPreview" style="margin-bottom:1rem; max-height:150px; overflow-y:auto; font-size:0.85rem; color:#666;"></div>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-primary" onclick="processRateSheetImages()">Read Rates from Images</button>
+            <button class="modal-btn modal-btn-secondary" onclick="closeRateSheetModal()">Close</button>
+        </div>
+        <div id="rateSheetStatus" class="modal-status"></div>
+    </div>
+</div>
+
+<!-- Pricing Update Modal -->
+<div class="modal-overlay" id="pricingModal">
+    <div class="modal-content">
+        <div class="modal-title">📊 Update MSRP Data</div>
+        <label class="modal-label">Paste new pricing as JSON</label>
+        <textarea id="pricingInput" class="modal-textarea" placeholder='{"2027": {"outback": {"premium": 36000}}}' style=""></textarea>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-primary" onclick="importPricingData()">Import</button>
+            <button class="modal-btn modal-btn-secondary" onclick="closePricingModal()">Close</button>
+        </div>
+        <div id="pricingStatus" class="modal-status"></div>
+    </div>
+</div>
+
+<script>
+    let newVehicleBaseMSRP = null;
+    let baseAPRLookedUp = null;
+
+    function autoPopulateSellPrice() {
+        const condition = document.getElementById('vehicleCondition').value;
+        const msrpValue = parseFloat(document.getElementById('msrp').value) || 0;
+        
+        if (condition === "NEW" && msrpValue > 0) {
+            document.getElementById('price').value = msrpValue;
+        }
+        calculate();
+    }
+    
+    function toggleCondition() {
+        const condition = document.getElementById('vehicleCondition').value;
+        
+        // Reset internal base MSRP when switching away from NEW
+        if (condition !== "NEW") {
+            newVehicleBaseMSRP = null;
+        }
+        
+        const vehiclePricingCard = document.getElementById('vehicle-pricing-card');
+        const yearGrid = document.getElementById('year-grid');
+        const addendumGroup = document.getElementById('addendum-group');
+        const makeModelGrid = document.getElementById('make-model-grid');
+        const trimGroup = document.getElementById('trim-group');
+        const lookupBtn = document.getElementById('msrp-lookup-btn');
+        const newYearGrid = document.getElementById('new-year-grid');
+        const newMakeModelGrid = document.getElementById('new-make-model-grid');
+        const newTrimGroup = document.getElementById('new-trim-group');
+        const newLookupBtn = document.getElementById('new-msrp-lookup-btn');
+        const budgetCard = document.getElementById('budget-card');
+        const budgetResultsCard = document.getElementById('budget-results-card');
+        const tradeCard = document.getElementById('trade-card');
+        const taxCard = document.getElementById('tax-card');
+        const financingCard = document.getElementById('financing-card');
+        const summaryCard = document.getElementById('summary-card');
+        const paymentCard = document.getElementById('payment-card');
+        
+        if (condition === "BUDGET") {
+            // Hide everything except budget tool
+            vehiclePricingCard.style.display = "none";
+            tradeCard.style.display = "none";
+            taxCard.style.display = "none";
+            financingCard.style.display = "none";
+            summaryCard.style.display = "none";
+            paymentCard.style.display = "none";
+            
+            // Show budget tool
+            budgetCard.style.display = "block";
+            budgetResultsCard.style.display = "block";
+            calculateBudget();
+        } else if (condition === "USED") {
+            vehiclePricingCard.style.display = "block";
+            budgetCard.style.display = "none";
+            budgetResultsCard.style.display = "none";
+            tradeCard.style.display = "block";
+            taxCard.style.display = "block";
+            financingCard.style.display = "block";
+            summaryCard.style.display = "block";
+            paymentCard.style.display = "block";
+            
+            yearGrid.style.display = "flex";
+            addendumGroup.style.display = "none";
+            makeModelGrid.style.display = "grid";
+            trimGroup.style.display = "flex";
+            lookupBtn.style.display = "block";
+            newYearGrid.style.display = "none";
+            newMakeModelGrid.style.display = "none";
+            newTrimGroup.style.display = "none";
+            newLookupBtn.style.display = "none";
+            calculate();
+        } else {
+            // NEW vehicle
+            vehiclePricingCard.style.display = "block";
+            budgetCard.style.display = "none";
+            budgetResultsCard.style.display = "none";
+            tradeCard.style.display = "block";
+            taxCard.style.display = "block";
+            financingCard.style.display = "block";
+            summaryCard.style.display = "block";
+            paymentCard.style.display = "block";
+            
+            yearGrid.style.display = "none";
+            addendumGroup.style.display = "flex";
+            makeModelGrid.style.display = "none";
+            trimGroup.style.display = "none";
+            lookupBtn.style.display = "none";
+            newYearGrid.style.display = "flex";
+            newMakeModelGrid.style.display = "grid";
+            newTrimGroup.style.display = "flex";
+            newLookupBtn.style.display = "block";
+            calculate();
+        }
+    }
+
+    function calculatePayment(principal, apr, months) {
+        if (isNaN(principal) || principal <= 0) return 0;
+        const monthlyRate = apr / 100 / 12;
+        if (monthlyRate === 0) return principal / months;
+        return (principal * (monthlyRate * Math.pow(1 + monthlyRate, months))) / (Math.pow(1 + monthlyRate, months) - 1);
+    }
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+    }
+
+    function calculate() {
+        const condition = document.getElementById('vehicleCondition').value;
+        const price = parseFloat(document.getElementById('price').value) || 0;
+        const addendum = parseFloat(document.getElementById('addendum').value) || 0;
+        const msrp = parseFloat(document.getElementById('msrp').value) || price;
+        const trade = parseFloat(document.getElementById('trade').value) || 0;
+        const lien = parseFloat(document.getElementById('lien').value) || 0;
+        const cash = parseFloat(document.getElementById('cash').value) || 0;
+        const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+        const tier = parseInt(document.getElementById('tier').value) || 1;
+        const term = parseInt(document.getElementById('term').value) || 72;
+        
+        // Tier APR adjustments
+        const tierAdjustments = {
+            1: 0.0,    // Tier 1 (740+): Base rate
+            2: 2.0,    // Tier 2 (700-739): +2.0%
+            3: 3.5,    // Tier 3 (640-699): +3.5%
+            4: 5.0,    // Tier 4 (620-639): +5.0%
+            5: 6.5     // Tier 5 (Below 620): +6.5%
+        };
+        
+        // Base APR (from input field or from lookup)
+        let baseAprInput = parseFloat(document.getElementById('baseApr').value) || 6.0;
+        let baseAPR = baseAprInput;
+        
+        // Apply tier adjustment
+        const apr = baseAPR + (tierAdjustments[tier] || 0);
+
+        // Calculate gross sale price (selling price + addendum)
+        const grossPrice = price + addendum;
+
+        // Calculate net trade equity
+        const netTradeEquity = trade - lien;
+
+        // Calculate taxable amount
+        const taxableAmount = grossPrice - netTradeEquity;
+
+        // Calculate sales tax
+        const salesTax = taxableAmount * (taxRate / 100);
+
+        // Calculate MVD registration and VLT fees based on NEW vs USED
+        let mvdFees = 0;
+        if (condition === "NEW") {
+            // For new vehicles, use Arizona MVD formula based on base MSRP from lookup:
+            // Step 1: Take 60% of base MSRP
+            // Step 2: Multiply by $2.80 per $100 (0.0280)
+            // Plus: $13.75 fixed Maricopa County fees
+            
+            // Use the looked-up base MSRP for MVD calculation (stored internally)
+            // If no lookup was done, fall back to the MSRP field value
+            const baseForMVD = newVehicleBaseMSRP || msrp;
+            const baseValue = baseForMVD * 0.60;
+            const vlt = baseValue * 0.0280;
+            const maricopa = 13.75;
+            mvdFees = Math.max(0, vlt + maricopa);
+        } else {
+            // For used vehicles, use Arizona MVD formula:
+            // Step 1: Take 60% of original base MSRP
+            // Step 2: Apply 16.25% depreciation per year after first year
+            // Step 3: Multiply by $2.89 per $100 (0.0289)
+            // Plus: $13.75 fixed Maricopa County fees
+            
+            const modelYear = parseInt(document.getElementById('modelYear').value);
+            const currentYear = 2026;
+            const yearsOld = currentYear - modelYear;
+            
+            // Step 1: 60% of original base MSRP
+            const baseValue = msrp * 0.60;
+            
+            // Step 2: Apply 16.25% depreciation per year (only for years AFTER first year)
+            let depreciationYears = Math.max(0, yearsOld - 1);
+            const depreciatedValue = baseValue * Math.pow(1 - 0.1625, depreciationYears);
+            
+            // Step 3: Multiply by VLT rate ($2.89 per $100)
+            const vlt = depreciatedValue * 0.0289;
+            
+            // Add fixed Maricopa County fees: $13.75 total
+            // ($8.00 Standard Reg + $4.00 Title Transfer + $1.50 Air Quality + $0.25 Compliance)
+            const maricopa = 13.75;
+            
+            mvdFees = Math.max(0, vlt + maricopa);
+        }
+
+        // Calculate amount financed
+        const vtrFee = 199;
+        const docFee = 549;
+        const amountFinanced = grossPrice + salesTax + mvdFees + vtrFee + docFee - netTradeEquity - cash;
+
+        // Update display
+        document.getElementById('out-gross').textContent = formatCurrency(grossPrice);
+        document.getElementById('out-equity').textContent = formatCurrency(netTradeEquity);
+        document.getElementById('out-tax').textContent = formatCurrency(salesTax);
+        document.getElementById('out-mvd').textContent = formatCurrency(mvdFees);
+        document.getElementById('out-doc').textContent = formatCurrency(docFee);
+        document.getElementById('out-financed').textContent = formatCurrency(Math.max(0, amountFinanced));
+
+        // Calculate payments for all terms
+        const payment36 = calculatePayment(Math.max(0, amountFinanced), apr, 36);
+        const payment48 = calculatePayment(Math.max(0, amountFinanced), apr, 48);
+        const payment60 = calculatePayment(Math.max(0, amountFinanced), apr, 60);
+        const payment72 = calculatePayment(Math.max(0, amountFinanced), apr, 72);
+
+        document.getElementById('p-36').textContent = formatCurrency(payment36);
+        document.getElementById('p-48').textContent = formatCurrency(payment48);
+        document.getElementById('p-60').textContent = formatCurrency(payment60);
+        document.getElementById('p-72').textContent = formatCurrency(payment72);
+        
+        // Display APR for each term
+        const aprDisplay = apr.toFixed(2) + '%';
+        document.getElementById('apr-36').textContent = aprDisplay;
+        document.getElementById('apr-48').textContent = aprDisplay;
+        document.getElementById('apr-60').textContent = aprDisplay;
+        document.getElementById('apr-72').textContent = aprDisplay;
+
+        // Update selected term payment
+        let selectedPayment;
+        if (term === 36) {
+            selectedPayment = payment36;
+        } else if (term === 48) {
+            selectedPayment = payment48;
+        } else if (term === 60) {
+            selectedPayment = payment60;
+        } else {
+            selectedPayment = payment72;
+        }
+        document.getElementById('p-selected').textContent = formatCurrency(selectedPayment);
+    }
+
+    function fetchCobaltRates() {
+        // Cobalt CU used auto rates (current as of September 2026)
+        // Standard APR only (not loyalty discount rates)
+        // Mapped to 3-year brackets at 60-month standard term
+        const brackets = {
+            '2026-2024': 6.09,   // 2024-2023: up to 65 months (standard APR)
+            '2023-2021': 6.54,   // 2022-2021: up to 60 months (standard APR)
+            '2020-2018': 6.64,   // 2020-2018: up to 60 months (standard APR)
+            '2017-2015': 6.79,   // 2019-2017: 61-66 months (standard APR)
+            '2014-2012': 10.19   // 2016 and older: 49-60 months (standard APR)
+        };
+        return brackets;
+    }
+    
+    function calculateBudget() {
+        const desiredPayment = parseFloat(document.getElementById('desiredPayment').value) || 0;
+        const term = parseInt(document.getElementById('budgetTerm').value) || 60;
+        const tier = parseInt(document.getElementById('budgetTier').value) || 1;
+        const downPayment = parseFloat(document.getElementById('budgetDownPayment').value) || 0;
+        
+        // Fixed costs (Arizona)
+        const mvdFees = 500; // Average MVD
+        const vtrFee = 199;
+        const docFee = 549;
+        const taxRate = 0.078; // 7.8% Arizona tax
+        
+        // Tier APR adjustments
+        const tierAdjustments = {
+            1: 0.0,    // Tier 1 (740+): Base rate
+            2: 2.0,    // Tier 2 (700-739): +2.0%
+            3: 3.5,    // Tier 3 (640-699): +3.5%
+            4: 5.0,    // Tier 4 (620-639): +5.0%
+            5: 6.5     // Tier 5 (Below 620): +6.5%
+        };
+        
+        const resultsContainer = document.getElementById('budget-bracket-results');
+        
+        let cobaltRates = fetchCobaltRates();
+        
+        if (!cobaltRates) {
+            resultsContainer.innerHTML = '<p style="color: #d32f2f; font-size: 12px;">Unable to calculate rates.</p>';
+            return;
+        }
+        
+        // Apply tier adjustment to Cobalt rates
+        const tierAdjustment = tierAdjustments[tier] || 0;
+        const adjustedRates = {};
+        for (const bracket in cobaltRates) {
+            adjustedRates[bracket] = cobaltRates[bracket] + tierAdjustment;
+        }
+        
+        // Define brackets in order (3-year increments)
+        const defaultBrackets = [
+            '2026-2024',
+            '2023-2021',
+            '2020-2018',
+            '2017-2015',
+            '2014-2012'
+        ];
+        
+        let html = '';
+        
+        for (const bracket of defaultBrackets) {
+            let aprValue = adjustedRates[bracket];
+            
+            // Fallback if exact bracket not found
+            if (!aprValue) {
+                aprValue = 8.0;
+            }
+            
+            const apr = aprValue / 100;
+            const monthlyRate = apr / 12;
+            
+            // Calculate principal needed for desired payment
+            let principal = 0;
+            if (monthlyRate === 0) {
+                principal = desiredPayment * term;
+            } else {
+                principal = desiredPayment / ((monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1));
+            }
+            
+            // Calculate principal needed for max payment ($20 more)
+            const maxPayment = desiredPayment + 20;
+            let maxPrincipal = 0;
+            if (monthlyRate === 0) {
+                maxPrincipal = maxPayment * term;
+            } else {
+                maxPrincipal = maxPayment / ((monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1));
+            }
+            
+            // Solve for vehicle price
+            const vehiclePrice = ((principal - mvdFees - vtrFee - docFee + downPayment) / (1 + taxRate));
+            const maxVehiclePrice = ((maxPrincipal - mvdFees - vtrFee - docFee + downPayment) / (1 + taxRate));
+            
+            const minPrice = Math.max(0, vehiclePrice);
+            const maxPrice = Math.max(0, maxVehiclePrice);
+            
+            html += `
+                <div class="bracket-row">
+                    <div class="bracket-title">${bracket} <span class="bracket-apr">at ${aprValue.toFixed(2)}% APR</span></div>
+                    <div class="bracket-price">${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}</div>
+                </div>
+            `;
+        }
+        
+        resultsContainer.innerHTML = html;
+    }
+    
+
+    async function lookupMSRP() {
+        const year = document.getElementById('modelYear').value;
+        const make = document.getElementById('vehicleMake').value.trim();
+        const model = document.getElementById('vehicleModel').value.trim();
+        const trim = document.getElementById('vehicleTrim').value.trim();
+        
+        if (!make || !model || !trim) {
+            alert('Please fill in Make, Model, and Trim');
+            return;
+        }
+        
+        const lookupBtn = document.getElementById('msrp-lookup-btn');
+        lookupBtn.textContent = 'Searching...';
+        lookupBtn.disabled = true;
+        
+        try {
+            // Web search for base MSRP
+            const searchResponse = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-6',
+                    max_tokens: 500,
+                    tools: [
+                        {
+                            type: 'web_search_20250305',
+                            name: 'web_search'
+                        }
+                    ],
+                    messages: [
+                        {
+                            role: 'user',
+                            content: `Search for the base MSRP of a ${year} ${make} ${model} ${trim}. Just give me the dollar amount, nothing else.`
+                        }
+                    ]
+                })
+            });
+            
+            if (!searchResponse.ok) {
+                throw new Error(`API Error: ${searchResponse.status}`);
+            }
+            
+            const searchData = await searchResponse.json();
+            
+            // Find the text response with the MSRP value
+            let msrpText = '';
+            if (searchData.content && Array.isArray(searchData.content)) {
+                for (const block of searchData.content) {
+                    if (block.type === 'text') {
+                        msrpText = block.text;
+                        break;
+                    }
+                }
+            }
+            
+            if (!msrpText) {
+                throw new Error('Could not find MSRP in search results');
+            }
+            
+            // Extract numeric value from response
+            const msrpValue = parseFloat(msrpText.replace(/[^\d.]/g, ''));
+            
+            if (!isNaN(msrpValue) && msrpValue > 0) {
+                document.getElementById('msrp').value = msrpValue;
+                document.getElementById('price').value = '';
+            } else {
+                throw new Error('Could not extract valid MSRP value');
+            }
+            
+            // Determine Cobalt CU rate based on vehicle year bracket
+            const yearInt = parseInt(year);
+            let cobaltRate = 6.64; // Default
+            
+            if (yearInt >= 2024) {
+                cobaltRate = 6.09;  // 2026-2024
+            } else if (yearInt >= 2021) {
+                cobaltRate = 6.54;  // 2023-2021
+            } else if (yearInt >= 2018) {
+                cobaltRate = 6.64;  // 2020-2018
+            } else if (yearInt >= 2015) {
+                cobaltRate = 6.79;  // 2017-2015
+            } else if (yearInt >= 2012) {
+                cobaltRate = 10.19; // 2014-2012
+            }
+            
+            baseAPRLookedUp = cobaltRate;
+            document.getElementById('baseApr').value = cobaltRate.toFixed(2);
+            
+            calculate();
+            lookupBtn.textContent = 'Look Up Original Base MSRP';
+            lookupBtn.disabled = false;
+        } catch (error) {
+            alert('Error looking up MSRP: ' + error.message);
+            lookupBtn.textContent = 'Look Up Original Base MSRP';
+            lookupBtn.disabled = false;
+        }
+    }
+
+    async function lookupNewMSRP() {
+        const year = document.getElementById('newVehicleYear').value;
+        const model = document.getElementById('newVehicleModel').value.trim().toLowerCase();
+        const trim = document.getElementById('newVehicleTrim').value.trim().toLowerCase();
+        
+        if (!model || !trim) {
+            alert('Please fill in Model and Trim');
+            return;
+        }
+        
+        // Subaru base MSRP lookup table (comprehensive - all trims, all drivetrains)
+        const subaruMSRP = {
+            '2025': {
+                'outback': {
+                    'base': 28895,
+                    'premium': 31195,
+                    'onyx edition': 36105,
+                    'limited': 37855,
+                    'onyx edition xt': 39360,
+                    'wilderness': 39960,
+                    'limited xt': 40195,
+                    'touring': 40345,
+                    'touring xt': 42795
+                },
+                'crosstrek': {
+                    'base': 26560,
+                    'premium': 27810,
+                    'sport': 30360,
+                    'limited': 32260,
+                    'wilderness': 33360
+                },
+                'forester': {
+                    'base': 29695,
+                    'premium': 31995,
+                    'sport': 34495,
+                    'limited': 35995,
+                    'touring': 39995,
+                    'premium hybrid': 36415,
+                    'sport hybrid': 39415,
+                    'limited hybrid': 40830,
+                    'touring hybrid': 43115
+                },
+                'impreza': {
+                    '2.0i': 23495,
+                    'sport': 25495,
+                    'rs': 30420
+                },
+                'legacy': {
+                    'base': 24895,
+                    'premium': 29110,
+                    'limited': 34005,
+                    'sport': 34495,
+                    'touring xt': 40110
+                }
+            },
+            '2026': {
+                'outback': {
+                    'premium': 34995,
+                    'limited': 41715,
+                    'limited xt': 44365,
+                    'wilderness': 44995,
+                    'touring': 45395,
+                    'touring xt': 47995
+                },
+                'crosstrek': {
+                    'base': 26995,
+                    'premium': 27995,
+                    'sport': 30625,
+                    'limited': 32995,
+                    'wilderness': 33795,
+                    'sport hybrid': 33995,
+                    'limited hybrid': 34995
+                },
+                'forester': {
+                    'base': 31445,
+                    'premium': 33445,
+                    'sport': 36245,
+                    'sport onyx edition': 37945,
+                    'wilderness': 38445,
+                    'limited': 37445,
+                    'touring': 41445,
+                    'premium hybrid': 36180,
+                    'sport hybrid': 39380,
+                    'limited hybrid': 40445,
+                    'touring hybrid': 42995
+                },
+                'impreza': {
+                    'sport': 27790,
+                    'rs': 30690
+                }
+            },
+            '2027': {
+                'crosstrek': {
+                    'base': 26995,
+                    'premium': 27995,
+                    'limited': 32995,
+                    'wilderness': 33795,
+                    'sport hybrid': 35415,
+                    'limited hybrid': 33995
+                },
+                'impreza': {
+                    'base': 24595,
+                    'rs': 29495
+                }
+            }
+        };
+        
+        const subaruPromotionalRates = {
+            '2026': {
+                'outback': {
+                    'premium': 1.9,      // 72 months
+                    'limited': 1.9,      // 72 months
+                    'limited xt': 1.9,   // 72 months
+                    'touring': 1.9,      // 72 months
+                    'touring xt': 1.9,   // 72 months
+                    'wilderness': 1.9    // 72 months
+                },
+                'crosstrek': {
+                    'base': 1.9,         // 72 months
+                    'premium': 1.9,      // 72 months
+                    'sport': 1.9,        // 72 months
+                    'sport hybrid': 1.9, // 72 months
+                    'limited': 1.9,      // 72 months
+                    'limited hybrid': 1.9, // 72 months
+                    'wilderness': 1.9    // 72 months
+                },
+                'forester': {
+                    'base': 1.9,         // 72 months
+                    'premium': 1.9,      // 72 months
+                    'sport': 1.9,        // 72 months
+                    'limited': 1.9,      // 72 months
+                    'touring': 1.9,      // 72 months
+                    'premium hybrid': 1.9, // 72 months
+                    'sport hybrid': 1.9, // 72 months
+                    'limited hybrid': 1.9, // 72 months
+                    'touring hybrid': 1.9, // 72 months
+                    'wilderness': 1.9    // 72 months
+                },
+                'impreza': {
+                    'sport': 2.9,        // 72 months
+                    'rs': 2.9            // 72 months
+                },
+                'ascent': {
+                    'premium': 1.9,      // 72 months
+                    'limited': 1.9,      // 72 months
+                    'touring': 1.9,      // 72 months
+                    'onyx edition': 1.9, // 72 months
+                    'onyx edition touring': 1.9 // 72 months
+                },
+                'legacy': {
+                    'base': 2.9,         // 72 months
+                    'premium': 2.9,      // 72 months
+                    'limited': 2.9,      // 72 months
+                    'sport': 2.9,        // 72 months
+                    'touring xt': 2.9    // 72 months
+                }
+            },
+            '2025': {
+                'outback': {
+                    'base': 5.9,
+                    'premium': 5.9,
+                    'limited': 5.9,
+                    'limited xt': 5.9,
+                    'wilderness': 5.9,
+                    'touring': 5.9,
+                    'touring xt': 5.9
+                },
+                'ascent': {
+                    'premium': 1.9,      // 72 months
+                    'limited': 1.9,      // 72 months
+                    'touring': 1.9       // 72 months
+                },
+                'crosstrek': {
+                    'base': 5.9,
+                    'premium': 5.9,
+                    'sport': 5.9,
+                    'limited': 5.9,
+                    'wilderness': 5.9
+                },
+                'forester': {
+                    'base': 5.9,
+                    'premium': 5.9,
+                    'sport': 5.9,
+                    'limited': 5.9,
+                    'touring': 5.9
+                },
+                'impreza': {
+                    'base': 5.9,
+                    'sport': 5.9,
+                    'rs': 5.9
+                }
+            }
+        };
+        const lookupBtn = document.getElementById('new-msrp-lookup-btn');
+        lookupBtn.textContent = 'Searching...';
+        lookupBtn.disabled = true;
+        
+        try {
+            // Load stored updates first
+            const storedUpdates = loadStoredPricingUpdates();
+            
+            // Look up MSRP from table (updated + hardcoded)
+            let msrpValue = null;
+            
+            // Check stored updates first
+            if (storedUpdates[year] && storedUpdates[year][model]) {
+                msrpValue = storedUpdates[year][model][trim] || storedUpdates[year][model]['base'];
+            }
+            
+            // Fall back to hardcoded if not in updates
+            if (!msrpValue) {
+                if (subaruMSRP[year] && subaruMSRP[year][model]) {
+                    msrpValue = subaruMSRP[year][model][trim] || subaruMSRP[year][model]['base'];
+                }
+            }
+            
+            if (msrpValue) {
+                newVehicleBaseMSRP = msrpValue;
+            } else {
+                alert(`No base MSRP found for ${year} Subaru ${model} ${trim}. Please enter the full sticker price manually in Original Factory MSRP.`);
+                lookupBtn.textContent = 'Look Up Base MSRP';
+                lookupBtn.disabled = false;
+                return;
+            }
+            
+            // Look up promotional rate from table (check localStorage first, then hardcoded)
+            let aprValue = null;
+            
+            // Check stored rates first
+            const storedRates = loadStoredPromotionalRates();
+            if (storedRates && storedRates[year] && storedRates[year][model]) {
+                aprValue = storedRates[year][model];
+            }
+            
+            // Fall back to hardcoded table if not in stored rates
+            if (!aprValue && subaruPromotionalRates[year] && subaruPromotionalRates[year][model]) {
+                aprValue = subaruPromotionalRates[year][model][trim] || subaruPromotionalRates[year][model]['base'];
+            }
+            
+            if (aprValue) {
+                baseAPRLookedUp = aprValue;
+                document.getElementById('baseApr').value = aprValue.toFixed(2);
+            } else {
+                baseAPRLookedUp = 6.0;
+                document.getElementById('baseApr').value = '6.00';
+            }
+            
+            calculate();
+            
+            // Reset button state
+            lookupBtn.textContent = 'Look Up Base MSRP';
+            lookupBtn.disabled = false;
+        } catch (error) {
+            alert('Error looking up MSRP: ' + error.message);
+            lookupBtn.textContent = 'Look Up Base MSRP';
+            lookupBtn.disabled = false;
+        }
+    }
+    
+    // Pricing update functions (modal version)
+    function openPricingModal() {
+        document.getElementById('pricingModal').classList.add('show');
+        document.getElementById('pricingStatus').textContent = '';
+        document.getElementById('pricingInput').value = '';
+    }
+    
+    function closePricingModal() {
+        document.getElementById('pricingModal').classList.remove('show');
+    }
+    
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('pricingModal');
+        if (event.target === modal) {
+            closePricingModal();
+        }
+    });
+    
+    function importPricingData() {
+        const input = document.getElementById('pricingInput').value.trim();
+        const status = document.getElementById('pricingStatus');
+        
+        if (!input) {
+            status.textContent = '❌ Please paste pricing data';
+            status.style.color = '#dc2626';
+            return;
+        }
+        
+        try {
+            const newData = JSON.parse(input);
+            
+            // Merge new data with existing subaruMSRP
+            // Store in localStorage for persistence
+            let storedData = localStorage.getItem('subaruMSRPUpdates');
+            let updates = storedData ? JSON.parse(storedData) : {};
+            
+            // Deep merge
+            for (const year in newData) {
+                if (!updates[year]) {
+                    updates[year] = {};
+                }
+                for (const model in newData[year]) {
+                    if (!updates[year][model]) {
+                        updates[year][model] = {};
+                    }
+                    Object.assign(updates[year][model], newData[year][model]);
+                }
+            }
+            
+            localStorage.setItem('subaruMSRPUpdates', JSON.stringify(updates));
+            
+            const count = Object.keys(newData).length;
+            status.textContent = `✅ Updated ${count} year(s) of pricing! Data saved.`;
+            status.style.color = '#059669';
+            
+            document.getElementById('pricingInput').value = '';
+            
+            setTimeout(() => {
+                closePricingModal();
+            }, 1500);
+            
+        } catch (error) {
+            status.textContent = `❌ Invalid JSON: ${error.message}`;
+            status.style.color = '#dc2626';
+        }
+    }
+    
+    // Load stored pricing updates on startup
+    function loadStoredPricingUpdates() {
+        const stored = localStorage.getItem('subaruMSRPUpdates');
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                console.error('Error loading stored pricing:', e);
+                return {};
+            }
+        }
+        return {};
+    }
+    
+    function openRateSheetModal() {
+        document.getElementById('rateSheetModal').classList.add('show');
+    }
+    
+    function closeRateSheetModal() {
+        document.getElementById('rateSheetModal').classList.remove('show');
+        document.getElementById('rateSheetInput').value = '';
+        document.getElementById('rateSheetPreview').innerHTML = '';
+        document.getElementById('rateSheetStatus').innerHTML = '';
+    }
+    
+    async function processRateSheetImages() {
+        const fileInput = document.getElementById('rateSheetInput');
+        const status = document.getElementById('rateSheetStatus');
+        const preview = document.getElementById('rateSheetPreview');
+        
+        if (fileInput.files.length === 0) {
+            status.textContent = '❌ Please select at least one image';
+            status.style.color = '#dc2626';
+            return;
+        }
+        
+        status.textContent = '⏳ Reading images...';
+        status.style.color = '#0066cc';
+        preview.innerHTML = 'Processing images...';
+        
+        try {
+            // Convert all images to base64
+            const images = [];
+            for (let file of fileInput.files) {
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+                images.push({
+                    type: 'image',
+                    source: {
+                        type: 'base64',
+                        media_type: 'image/jpeg',
+                        data: base64
+                    }
+                });
+            }
+            
+            // Send to Claude API to read the rates
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-6',
+                    max_tokens: 1000,
+                    messages: [
+                        {
+                            role: 'user',
+                            content: [
+                                ...images,
+                                {
+                                    type: 'text',
+                                    text: 'Extract all 72-month promotional financing APR rates from these rate sheets. Return ONLY a JSON object with this format: {"2026": {"outback": 4.9, "crosstrek": 1.9, "forester": 1.9, "impreza": 2.9, "ascent": 1.9, "legacy": 2.9}, "2025": {...}}. If you find rates for other years, include them too. Return ONLY the JSON, no other text.'
+                                }
+                            ]
+                        }
+                    ]
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            const responseText = data.content[0].text;
+            
+            // Parse the JSON response
+            const ratesData = JSON.parse(responseText);
+            
+            // Save to localStorage
+            localStorage.setItem('subaruPromotionalRates', JSON.stringify(ratesData));
+            
+            // Display what was extracted
+            let summary = '✅ Rates extracted:\n';
+            for (const year in ratesData) {
+                summary += `\n${year}:\n`;
+                for (const model in ratesData[year]) {
+                    summary += `  • ${model}: ${ratesData[year][model]}%\n`;
+                }
+            }
+            
+            preview.textContent = summary;
+            preview.style.whiteSpace = 'pre-wrap';
+            preview.style.color = '#059669';
+            status.textContent = '✅ Rates updated successfully!';
+            status.style.color = '#059669';
+            
+            // Close modal after 2 seconds
+            setTimeout(() => {
+                closeRateSheetModal();
+            }, 2000);
+            
+        } catch (error) {
+            status.textContent = `❌ Error: ${error.message}`;
+            status.style.color = '#dc2626';
+            preview.innerHTML = '';
+        }
+    }
+    
+    // Load promotional rates from localStorage on startup
+    function loadStoredPromotionalRates() {
+        const stored = localStorage.getItem('subaruPromotionalRates');
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                console.error('Error loading stored promotional rates:', e);
+                return null;
+            }
+        }
+        return null;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        calculate();
+        toggleCondition();
+        
+        const lookupBtn = document.getElementById('msrp-lookup-btn');
+        const newLookupBtn = document.getElementById('new-msrp-lookup-btn');
+        if (lookupBtn) {
+            lookupBtn.addEventListener('click', lookupMSRP);
+        }
+        if (newLookupBtn) {
+            newLookupBtn.addEventListener('click', lookupNewMSRP);
+        }
+    });
+</script>
+
+</body>
+</html>
